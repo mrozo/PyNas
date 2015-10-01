@@ -1,0 +1,10 @@
+# Exclude everything
+*
+# Except whitelist
+!*.py
+!*.tex
+!*.md
+!*.git*
+
+# Exception on top of the white list
+*Development*.py
