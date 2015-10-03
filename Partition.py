@@ -65,10 +65,11 @@ class Partition:
                   None
     :var Number: number of the partition on the storage device, can be None
     :var Size: partitions size in bytes, can be None
-    :var offset: offset of the partition on a hard drive, can be None
-    :var flags: frozenset containing lowercase strings representing partitions
+    :var Offset: offset of the partition on a hard drive, can be None
+    :var Flags: frozenset containing lowercase strings representing partitions
                 flags, can be None
-    :var filesystem: lowercase filesystem name, can be None
+    :var Filesystem: lowercase filesystem name, can be None
+    :var Required: Flag indicating if the partition is required by the system
     """
     UUID = None
     Name = None
@@ -79,6 +80,7 @@ class Partition:
     Offset = None
     Flags = None
     Filesystem = None
+    Required = None
 
     def __init__(
                 self,
@@ -89,7 +91,8 @@ class Partition:
                 Size=None,
                 Offset=None,
                 Flags=None,
-                Filesystem=None
+                Filesystem=None,
+                Required=None
                 ):
         """
         Construct a Partition object specified by
@@ -104,7 +107,11 @@ class Partition:
         :param Filesystem: not yet supported
         :return: not yet supported
         """
-        rewrite_attributes(self, self._PartitionsAttributes, locals())
+        rewrite_attributes(
+            self,
+            list(self._PartitionsAttributes)+['Required'],
+            locals()
+        )
 
     def __eq__(self, other):
         """

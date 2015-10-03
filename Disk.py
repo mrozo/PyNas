@@ -81,7 +81,7 @@ class Disk:
                 )
             )
 
-        self.Partitions = parted_info['Partitions']
+        self.Partitions = partitions_list
 
     def __eq__(self, other):
         # todo not a pythons way of doing things
