@@ -21,8 +21,8 @@ class ConfigParser:
                      'Partitions' section of the config
     """
     Config = None
-    Disks = list()
-    Partitions = list()
+    Disks = None
+    Partitions = None
 
     def __init__(self, config):
         """
@@ -30,6 +30,8 @@ class ConfigParser:
         :param config: data structure containing PyNas configuration.
         :return:
         """
+        self.Partitions = list()
+        self.Disks = list()
         self.Config = config
         set_root_password(self.Config['RootPassword'])
         self.parse_disks()
@@ -37,8 +39,7 @@ class ConfigParser:
 
     def parse_disks(self):
         """
-        Parse 'Disks' section from the config. Every disk record has to contain
-        the following attributes : ['Name','SerialNumber','Type']
+        Parse 'Disks' section from the config
         """
         disks_list = []
 
@@ -50,9 +51,7 @@ class ConfigParser:
 
     def parse_partitions(self):
         """
-        Parse 'Partitions' section from the config. Every partition record must
-        contain the following attributes: ['Name', 'UUID', 'Disk', 'Type',
-        'Required']
+        Parse 'Partitions' section from the config
         """
 
         for partition_config in self.Config['Partitions']:
@@ -68,6 +67,7 @@ class ConfigParser:
             for disk in self.Disks:
                 if disk.Name == partition_config['Disk']:
                     disk.Partitions.append(partition)
+                    break
 
 
 
