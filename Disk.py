@@ -53,10 +53,16 @@ class Disk:
                     Partitions=None,
                     Name=None
                 ):
+
+        self.Partitions = list()
         if DeviceHandle is not None:
             self.construct_from_handle(DeviceHandle)
         else:
-            rewrite_attributes(self, self._DiskAttributes, locals())
+            rewrite_attributes(
+                self,
+                self._DiskAttributes,
+                locals(), skip_none=False
+            )
 
     def construct_from_handle(self, device_handle) -> None:
         """
@@ -105,6 +111,8 @@ def disk_class_tests():
         SerialNumber='12345678abcd',
         Name='hd1'
     )
+
+    # todo comparisions of hard drives containing partitions
 
     assert empty_disk == disk_from_handle,\
         'comparison with an empty disk should match any hard drive.'

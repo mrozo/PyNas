@@ -1,6 +1,7 @@
 from Disk import Disk
 from Partition import Partition
 from ShellCmdWrapper import set_root_password
+from Exceptions import *
 
 __author__ = 'm'
 
@@ -28,7 +29,6 @@ class ConfigParser:
         """
         Initialize the instance and parse the config.
         :param config: data structure containing PyNas configuration.
-        :return:
         """
         self.Partitions = list()
         self.Disks = list()
@@ -41,13 +41,14 @@ class ConfigParser:
         """
         Parse 'Disks' section from the config
         """
-        disks_list = []
 
         for disk_config in self.Config['Disks']:
-            disk = Disk(SerialNumber=disk_config['SerialNumber'])
-            disks_list.append(disk)
+            disk = Disk(
+                Name=disk_config['Name'],
+                SerialNumber=disk_config['SerialNumber']
+            )
+            self.Disks.append(disk)
 
-        self.Disks = disks_list
 
     def parse_partitions(self):
         """
@@ -66,9 +67,14 @@ class ConfigParser:
 
             for disk in self.Disks:
                 if disk.Name == partition_config['Disk']:
+
+                    if disk.Partitions is None:
+                        disk.Partitions = list()
+
                     disk.Partitions.append(partition)
                     break
-
+            else:
+                raise MissingDeviceError()
 
 
 # todo create set of tests
@@ -91,7 +97,7 @@ def config_parser_class_tests():
         UUID="0101010101010101",
         Filesystem="NTFS"
     )
-    new_partition = Partition(
+    partition4 = Partition(
         Name="newPartition",
         UUID="2222222222222222",
         Filesystem="EXT2"
@@ -103,7 +109,7 @@ def config_parser_class_tests():
     )
     hd2 = Disk(
         SerialNumber="hd2",
-        Partitions=[partition3, partition2, new_partition],
+        Partitions=[partition3, partition4],
         Name="hd2"
     )
 
@@ -120,14 +126,18 @@ def config_parser_class_tests():
              "Type": "EXT4", "Required": True},
             {"Name": "partition3", "UUID": "0101010101010101", "Disk": "hd2",
              "Type": "NTFS", "Required": True},
-            {"Name": "newPartition", "UUID": "2222222222222222", "Disk": "hd2",
+            {"Name": "partition4", "UUID": "2222222222222222", "Disk": "hd2",
              "Type": "EXT2", "Required": True},
         ]
     }
 
+    #
+    # create the broken_config_src by copying the config_src and appending
+    # some wrong data
+    #
     broken_config_src = deepcopy(config_src)
     broken_config_src['Partitions'].append(
-        {"Name": "partition4", "UUID": "9999999999999999", "Disk": "hd1",
+        {"Name": "newPartition", "UUID": "9999999999999999", "Disk": "hd3",
          "Type": "EXT4", "Required": True}
     )
     broken_config_src['Disks'].append(
@@ -144,30 +154,65 @@ def config_parser_class_tests():
     except Exception as E:
         assert False, 'Failed to parse the config with a bad data\n' + str(E)
 
-    assert len(config.Partitions) == 4, "Failed to parse properly partitions " \
-                                        "from the config len(config." \
-                                        "Partitions) equals " + \
-                                        str(len(config.Partitions)) + \
-                                        ", should be 4"
+    #
+    # Test if partitions section from config_src and broken_config_src have been
+    # properly parsed
+    #
+    assert len(config.Partitions) == 4, """
+Failed to parse properly partitions from the config len(config.Partitions)
+equals """ + str(len(config.Partitions)) + """, should be 4.
+"""
 
-    assert len(config.Disks) == 2, "Failed to properly parse Disks from the " \
-                                   "config. len(config.Disks) equals " +\
-                                   str(len(config.Disks)) + ", should be 2"
+    assert len(broken_config.Partitions) == 5, """
+Failed to properly parse partitions in the broken_config. len(broken_config.Partitions)
+equals """ + str(len(broken_config.Partitions)) + """, should be 5.
+"""
 
-    assert len(broken_config.Partitions) == 5, "Failed to properly parse " \
-                                               "partitions in the broken_config" \
-                                               ". len(broken_config.Partitions)" \
-                                               " equals " + \
-                                               str(len(broken_config.Partitions)) + \
-                                               ", should be 5"
+    #
+    # Test if disks section from config_src and broken_config_src have been
+    # properly parsed
+    #
+    assert len(config.Disks) == 2, """
+Failed to properly parse Disks from the config. len(config.Disks) equals
+""" + str(len(config.Disks)) + """, should be 2.
+"""
+    assert len(broken_config.Disks) == 3, """
+Failed to properly parse Disks from the broken_config. len(broken_config.Partitions)
+equals """ + str(len(broken_config.Disks)) + """, should be 3.
+"""
 
-    assert len(broken_config.Disks) == 3, "Failed to properly parse Disks from"\
-                                          " the broken_config. " + \
-                                          "len(broken_config.Partitions) equals"\
-                                          + " " + str(len(broken_config.Disks))\
-                                          + ", should be 3 "
+    #
+    # Test if partitions have been assigned to a proper hard drives during
+    # parsing of the config_src
+    #
+    for disk in config.Disks:
 
-    # todo len(config.Disks[x].partitions) for every disk
+        if disk == hd1:
+            assert disk.Partitions is not None, """
+The disk 'hd1' has no list of partitions.
+"""
+            assert len(disk.Partitions) == 2, """
+Failed to properly assign partitions from config_src to disk 'hd1'.
+""" + len(disk.Partitions) + """ partitions found, should be 2
+"""
+            assert (partition1 in disk.Partitions and
+                    partition2 in disk.Partitions), """
+Failed to find partition1 and/or partition2 in list of hd1 partitions
+"""
+        if disk == hd2:
+            assert disk.Partitions is not None, """
+The disk 'hd2' has no list of partitions.
+"""
+            assert len(disk.Partitions) == 2, """
+Failed to properly assign partitions from config_src to disk 'hd2'.
+""" + len(disk.Partitions) + """ partitions found, should be 2
+"""
+            assert (partition3 in disk.Partitions and
+                    partition4 in disk.Partitions), """
+Failed to find partition3 and/or partition4 in list of hd1 partitions
+"""
+
+    # todo przemyśleć bad_config
     return True
 
 
