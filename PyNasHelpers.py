@@ -1,3 +1,4 @@
+from copy import copy
 __author__ = 'm'
 
 
@@ -73,3 +74,53 @@ def compare_lists(listA, listB):
 
     return common, added_in_b, removed_in_b
 
+
+def py_nas_helpers_tests():
+    #
+    # rewrite_attributes tests
+    #
+
+    #
+    # test 1: basics
+    #
+    attribute_names = ['a', 'b', 'c']
+    attributes = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
+    obj = object()
+    rewrite_attributes(obj, attribute_names, attributes)
+    for attribute_name in attribute_names:
+        assert hasattr(obj,attribute_name),\
+            "Method rewrite_attributes didn't create an attribute '" + \
+            str(attribute_name) + "'"
+        assert getattr(obj, attribute_name) == attributes[attribute_name],\
+            "Method rewrite_attributes didn't copy an attribute value '" + \
+            str(attribute_name) + "'"
+
+    rewrite_attributes(obj, ['empty_attribute'], {'empty_attribute': None})
+
+    #
+    # test 2: skip_none tests
+    #
+    assert not hasattr(obj, 'empty_attribute'), \
+        "by default rewrite_attributes should not copy attribute, when its " \
+        "value is None"
+
+    rewrite_attributes(
+            obj,
+            ['empty_attribute'],
+            {'empty_attribute': None},
+            skip_none=False
+        )
+
+    assert hasattr(obj, 'empty_attribute'), \
+        "when skip_none argument is set to False, rewrite_attributes should "\
+        "copy even attributes with value set to None"
+
+    #
+    # lazy compare tests
+    #
+
+    #
+    # compare lists tests
+    #
+
+    return True

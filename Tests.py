@@ -2,6 +2,7 @@ from ConfigParser import config_parser_class_tests, ConfigParser
 from Partition import partition_class_tests
 from Disk import disk_class_tests
 from Hardware import test_hardware_class
+from PyNasHelpers import py_nas_helpers_tests
 try:
     from DevelopmentConfig import NasConf
 
@@ -25,6 +26,7 @@ def py_nas_tests():
         assert disk_class_tests(), 'Disk class tests have failed.'
         assert config_parser_class_tests(), 'Config parser tests have failed'
         assert test_hardware_class(), "Hardware class test have failed"
+        assert py_nas_tests(), "PyNasHelpers tests have failed"
 
         # todo parted tests
         # todo hdparm tests
