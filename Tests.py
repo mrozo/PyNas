@@ -29,7 +29,7 @@ def py_nas_tests():
         # todo parted tests
         # todo hdparm tests
     except Exception as E:
-        print(E)
+        assert False, E.__str__()
 
 
 py_nas_tests()
