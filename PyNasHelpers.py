@@ -118,6 +118,25 @@ def py_nas_helpers_tests():
     #
     # lazy compare tests
     #
+    obj = object()
+    obj.a = 1
+    obj.b = 2
+    obj.c = 3
+    obj.empty_attr = None
+    attribute_names = ['a', 'b']
+    obj1 = object()
+    obj1.a = 1
+    obj1.b = 2
+
+    assert lazy_attributes_compare(obj, obj1, attribute_names),\
+        "lazy_attributes_compare has failed the city"
+
+    attribute_names = ['a', 'b', 'c']
+    assert not lazy_attributes_compare(obj, obj1, attribute_names), \
+        "If any of the attributes is missing in any of the attributes the "\
+        "method should return false"
+
+
 
     #
     # compare lists tests

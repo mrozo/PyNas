@@ -26,7 +26,7 @@ def py_nas_tests():
         assert disk_class_tests(), 'Disk class tests have failed.'
         assert config_parser_class_tests(), 'Config parser tests have failed'
         assert test_hardware_class(), "Hardware class test have failed"
-        assert py_nas_tests(), "PyNasHelpers tests have failed"
+        assert py_nas_helpers_tests(), "PyNasHelpers tests have failed"
 
         # todo parted tests
         # todo hdparm tests
