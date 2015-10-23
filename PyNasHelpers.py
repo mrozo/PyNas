@@ -40,3 +40,36 @@ def lazy_attributes_compare(self, other, attribute_names, skip_none=True):
             return False
 
     return True
+
+
+def compare_lists(listA, listB):
+    """
+    Compare tow lists and return differences.
+    :param listA:
+    :param listB:
+    :return: three lists common, added_in_b, removed_in_b, representing
+             found differences
+    """
+    A = copy(listA)
+    B = copy(listB)
+
+    common = []
+    added_in_b = []
+    removed_in_b = []
+
+    for diskA in A:
+        for diskB in B:
+            if diskA == diskB:
+                common.append(diskA)
+                B.remove(diskB)
+                break
+        else:
+            removed_in_b.append(diskA)
+            A.remove(diskA)
+            break
+
+    if len(B):
+        added_in_b = B
+
+    return common, added_in_b, removed_in_b
+
