@@ -1,8 +1,8 @@
-from ConfigParser import config_parser_class_tests, ConfigParser
-from Partition import partition_class_tests
-from Disk import disk_class_tests
-from Hardware import test_hardware_class
-from PyNasHelpers import py_nas_helpers_tests
+from Kernel.ConfigParser import config_parser_class_tests, ConfigParser
+from Kernel.PyNasHelpers import py_nas_helpers_tests
+from Hardware.Partition import partition_class_tests
+from Hardware.Disk import disk_class_tests
+from Hardware.Hardware import test_hardware_class
 try:
     from DevelopmentConfig import NasConf
 

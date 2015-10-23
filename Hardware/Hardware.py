@@ -1,4 +1,4 @@
-from Disk import Disk
+from Hardware.Disk import Disk
 __author__ = 'm'
 
 #
