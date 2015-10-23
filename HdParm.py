@@ -7,16 +7,16 @@ RootPassword = b'k'
 InfoRegex = {
     'SerialNumber': re.compile("Serial Number:[ \t]*([^\n\t ]*)"),
     'ModelNumber': re.compile("Model Number:[ \t]*([0-9a-zA-Z_\(\)\-+., ]+)"),
-    'FirmwareRevision': re.compile("irmware Revision:[ \t]*([0-9a-zA-Z_\(\)\-+ ]+)")
+    'FirmwareRevision': re.compile("Firmware Revision:[ \t]*([0-9a-zA-Z_\(\)\-+ ]+)")
 }
 
 
 class HdParm:
     InfoStr = ''
-    Path = ''
     SerialNumber = ''
+    Path = ''
     ModelNumber = ''
-    FirmwareRevision=''
+    FirmwareRevision = ''
 
     @staticmethod
     def getinfofield(regexp, infostr):
