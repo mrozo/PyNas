@@ -1,5 +1,5 @@
 from glob import iglob
-
+from copy import copy
 from HdParm import HdParm
 from Parted import PartedWrapper
 from Partition import Partition
@@ -89,6 +89,18 @@ class Disk:
 
         self.Partitions = partitions_list
 
+    def add_partition(self, partition, index=-1):
+        """
+        Append a partition to partitions list on a specified index
+        :param partition: partition to insert
+        :param index: index of the partition, can be negative
+        """
+        if self.Partitions is None:
+            self.Partitions = list()
+
+        self.Partitions.insert(index, partition)
+
+
     def __eq__(self, other):
         # todo not a pythons way of doing things
         if not isinstance(other, Disk):
@@ -105,19 +117,54 @@ class Disk:
 
 
 def disk_class_tests():
+    #
+    # basic test on empty disks
+    #
     empty_disk = Disk()
     disk_from_handle = Disk(r'/dev/sda')
     disk_from_data = Disk(
         SerialNumber='12345678abcd',
         Name='hd1'
     )
-
-    # todo comparisions of hard drives containing partitions
-
     assert empty_disk == disk_from_handle,\
         'comparison with an empty disk should match any hard drive.'
     assert empty_disk == disk_from_data,\
         'comparison with an empty disk should match any hard drive.'
     assert disk_from_data != disk_from_handle,\
         'comparison of real disk with a fake one should return false.'
+
+    #
+    # test if comparison method works well with disks containing partitions
+    #
+    disk_with_partition_1 = Disk(
+        Partitions=[
+            Partition(UUID="1111111111111111")
+        ]
+    )
+
+    disk_with_partition_2 = Disk()
+
+    disk_with_partition_2.add_partition(
+        Partition(UUID="1111111111111111")
+    )
+
+    assert disk_with_partition_1 == disk_with_partition_2,\
+        "Comparision of two hard drives containing the same Partitions, should"\
+        "return true."
+
+    disk_with_partition_3 = Disk(
+        Partitions=[
+            Partition(),
+            Partition()
+        ]
+    )
+
+    assert disk_with_partition_1 != disk_with_partition_3,\
+        "comparision between disks containing diffrent number of partitions "\
+        "should return false"
+
+    assert empty_disk == disk_with_partition_1,\
+        "An empty disk instance should match any other Disk instance"
+
+    # todo test Disk.compare_disks_lists()
     return True
