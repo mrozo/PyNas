@@ -1,9 +1,9 @@
 from glob import iglob
 from copy import copy
-from HdParm import HdParm
-from Parted import PartedWrapper
-from Partition import Partition
-from PyNasHelpers import rewrite_attributes, lazy_attributes_compare
+from Wrappers.HdParm import HdParm
+from Wrappers.Parted import PartedWrapper
+from Hardware.Partition import Partition
+from Kernel.PyNasHelpers import rewrite_attributes, lazy_attributes_compare
 
 __author__ = 'm'
 

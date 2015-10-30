@@ -1,7 +1,7 @@
-from Disk import Disk
-from Partition import Partition
-from ShellCmdWrapper import set_root_password
-from Exceptions import *
+from Hardware.Disk import Disk
+from Hardware.Partition import Partition
+from Wrappers.ShellCmdWrapper import set_root_password
+from Kernel.Exceptions import *
 
 __author__ = 'm'
 
@@ -212,7 +212,7 @@ Failed to properly assign partitions from config_src to disk 'hd2'.
 Failed to find partition3 and/or partition4 in list of hd1 partitions
 """
 
-    # todo przemyśleć bad_config
+    # todo przemyslec bad_config
     return True
 
 

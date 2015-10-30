@@ -1,5 +1,5 @@
 from glob import iglob
-from PyNasHelpers import rewrite_attributes, lazy_attributes_compare
+from Kernel.PyNasHelpers import rewrite_attributes, lazy_attributes_compare
 __author__ = 'm'
 
 

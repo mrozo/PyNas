@@ -1,6 +1,6 @@
 import subprocess
 import re
-from ShellCmdWrapper import ShellCmdWrapper
+from Wrappers.ShellCmdWrapper import ShellCmdWrapper
 
 __author__ = 'm'
 
