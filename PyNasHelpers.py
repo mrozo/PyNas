@@ -18,7 +18,7 @@ def rewrite_attributes(self, attribute_names, variables, skip_none=True):
             if skip_none and value is None:
                 continue
 
-            self.__setattr__(attribute, value)
+            setattr(self, attribute, value)
 
 
 def lazy_attributes_compare(self, other, attribute_names, skip_none=True):
@@ -33,8 +33,10 @@ def lazy_attributes_compare(self, other, attribute_names, skip_none=True):
     :return: True if no significant difference has been found, otherwise False
     """
     for attribute in attribute_names:
-        self_attribute = self.__getattribute__(attribute)
-        other_attribute = other.__getattribute__(attribute)
+
+        self_attribute = getattr(self, attribute, None)
+        other_attribute = getattr(other, attribute, None)
+
         if skip_none and (self_attribute is None or other_attribute is None):
             continue
         if self_attribute != other_attribute:
@@ -76,6 +78,10 @@ def compare_lists(listA, listB):
 
 
 def py_nas_helpers_tests():
+    class EmptyClass:
+        pass
+
+
     #
     # rewrite_attributes tests
     #
@@ -85,7 +91,7 @@ def py_nas_helpers_tests():
     #
     attribute_names = ['a', 'b', 'c']
     attributes = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
-    obj = object()
+    obj = EmptyClass()
     rewrite_attributes(obj, attribute_names, attributes)
     for attribute_name in attribute_names:
         assert hasattr(obj,attribute_name),\
@@ -118,13 +124,13 @@ def py_nas_helpers_tests():
     #
     # lazy compare tests
     #
-    obj = object()
+    obj = EmptyClass()
     obj.a = 1
     obj.b = 2
     obj.c = 3
     obj.empty_attr = None
     attribute_names = ['a', 'b']
-    obj1 = object()
+    obj1 = EmptyClass()
     obj1.a = 1
     obj1.b = 2
 
@@ -135,8 +141,6 @@ def py_nas_helpers_tests():
     assert not lazy_attributes_compare(obj, obj1, attribute_names), \
         "If any of the attributes is missing in any of the attributes the "\
         "method should return false"
-
-
 
     #
     # compare lists tests
