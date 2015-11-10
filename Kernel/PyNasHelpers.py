@@ -138,9 +138,17 @@ def py_nas_helpers_tests():
         "lazy_attributes_compare has failed the city"
 
     attribute_names = ['a', 'b', 'c']
-    assert not lazy_attributes_compare(obj, obj1, attribute_names), \
-        "If any of the attributes is missing in any of the attributes the "\
-        "method should return false"
+    assert not lazy_attributes_compare(
+        obj, obj1, attribute_names, skip_none=False
+    ), \
+        "If any of the attributes is missing in any of the objects and " \
+        "skip_none is False, the method should return false"
+    assert lazy_attributes_compare(
+        obj, obj1, attribute_names, skip_none=True
+    ), \
+        "If any of the attributes is missing in any of the objects and " \
+        "skip_none is True, the method should treat them as if they were equal"\
+        " to None."
 
     #
     # compare lists tests
