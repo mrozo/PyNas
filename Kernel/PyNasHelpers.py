@@ -1,4 +1,6 @@
 from copy import copy
+from gi.overrides.keysyms import comma
+
 __author__ = 'm'
 
 
@@ -47,11 +49,11 @@ def lazy_attributes_compare(self, other, attribute_names, skip_none=True):
 
 def compare_lists(listA, listB):
     """
-    Compare tow lists and return differences.
+    Compare two lists and return differences.
     :param listA:
     :param listB:
-    :return: three lists common, added_in_b, removed_in_b, representing
-             found differences
+    :return: three lists: common, added_in_b, removed_in_b, containing found
+             differences
     """
     A = copy(listA)
     B = copy(listB)
@@ -60,16 +62,13 @@ def compare_lists(listA, listB):
     added_in_b = []
     removed_in_b = []
 
-    for diskA in A:
-        for diskB in B:
-            if diskA == diskB:
-                common.append(diskA)
-                B.remove(diskB)
-                break
+    for elementA in A:
+
+        if elementA in B:
+            B.remove(elementA)
+            common.append(elementA)
         else:
-            removed_in_b.append(diskA)
-            A.remove(diskA)
-            break
+            removed_in_b.append(elementA)
 
     if len(B):
         added_in_b = B
@@ -149,9 +148,30 @@ def py_nas_helpers_tests():
         "If any of the attributes is missing in any of the objects and " \
         "skip_none is True, the method should treat them as if they were equal"\
         " to None."
+    assert lazy_attributes_compare(
+        obj, obj1, attribute_names
+    ), \
+        "If any of the attributes is missing in any of the objects and " \
+        "skip_none not set, the method should treat them as if they were equal"\
+        " to None."
 
     #
     # compare lists tests
     #
+    listA = [0, 1, 2, 3, 4, 5, 6]
+    listB = [0, 1, 2, 6, 7]
+
+    (common, added_in_b, removed_in_b) = compare_lists(listA, listB)
+
+    assert set(listA) & set(listB) == set(common), "compare_lists failed to "\
+        "return a proper list of values that are common for both lists."
+
+    assert set(listB) - set(listA) == set(added_in_b), "compare_lists failed "\
+        "to return a proper list of values that are in the listB, but not in "\
+        "the listA."
+
+    assert set(listA) - set(listB) == set(removed_in_b), "compare_lists failed"\
+        "to return a proper list of values that are in the listA, but not in "\
+        "the listB."
 
     return True
